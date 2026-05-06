@@ -1,0 +1,84 @@
+{% extends "base/base.html" %}
+{% block title %}BITE.co · Dashboard{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+  <h1 class="text-3xl font-bold tracking-tight">Hola, {{ user.first_name|default:user.username }}</h1>
+  <p class="text-slate-600 mt-1">
+    Empresa <span class="mono text-slate-900">{{ empresa_id|default:"—" }}</span>
+    · Rol <span class="mono text-slate-900">{{ rol }}</span>
+  </p>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+  <!-- Reportes -->
+  <a href="/reportes/" class="group block bg-white border border-slate-200 rounded-lg p-6 hover:border-emerald-500 hover:shadow-sm transition">
+    <div class="flex items-center gap-3 mb-3">
+      <div class="bg-emerald-100 text-emerald-700 p-2 rounded">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 17l6-6 4 4 8-8M14 7h7v7"/>
+        </svg>
+      </div>
+      <h2 class="text-lg font-semibold">Reportes mensuales</h2>
+    </div>
+    <p class="text-slate-600 text-sm">Consumo por proveedor, mes y proyecto. Filtra por empresa.</p>
+    <p class="text-emerald-600 text-sm font-semibold mt-3 group-hover:underline">Ver reportes →</p>
+  </a>
+
+  <!-- ASR Hub -->
+  <a href="/asr-hub/" class="group block bg-white border border-slate-200 rounded-lg p-6 hover:border-indigo-500 hover:shadow-sm transition">
+    <div class="flex items-center gap-3 mb-3">
+      <div class="bg-indigo-100 text-indigo-700 p-2 rounded">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </div>
+      <h2 class="text-lg font-semibold">ASR Testing Hub</h2>
+    </div>
+    <p class="text-slate-600 text-sm">Validar ASR-01 (seguridad), ASR-07 (disponibilidad), ASR-14 (auditoria).</p>
+    <p class="text-indigo-600 text-sm font-semibold mt-3 group-hover:underline">Probar ASRs →</p>
+  </a>
+
+  <!-- Auditoria -->
+  <a href="/asr-hub/auditoria/" class="group block bg-white border border-slate-200 rounded-lg p-6 hover:border-slate-700 hover:shadow-sm transition">
+    <div class="flex items-center gap-3 mb-3">
+      <div class="bg-slate-100 text-slate-700 p-2 rounded">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+        </svg>
+      </div>
+      <h2 class="text-lg font-semibold">Trail de auditoría</h2>
+    </div>
+    <p class="text-slate-600 text-sm">Tabla completa de RegistroAuditoria con filtros por accion, usuario y resultado.</p>
+    <p class="text-slate-700 text-sm font-semibold mt-3 group-hover:underline">Ver registros →</p>
+  </a>
+</div>
+
+<!-- Quick stats -->
+<div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+  <div class="bg-white border border-slate-200 rounded-lg p-5">
+    <div class="text-xs uppercase tracking-wider text-slate-500 mb-1">Health endpoint</div>
+    <div class="text-2xl font-bold text-emerald-600 mono" id="kpi-health">checking…</div>
+    <div class="text-xs text-slate-400 mt-1 mono">/health-check/</div>
+  </div>
+  <div class="bg-white border border-slate-200 rounded-lg p-5">
+    <div class="text-xs uppercase tracking-wider text-slate-500 mb-1">Auth provider</div>
+    <div class="text-2xl font-bold text-slate-900">Auth0</div>
+    <div class="text-xs text-slate-400 mt-1">OAuth2 + RBAC</div>
+  </div>
+  <div class="bg-white border border-slate-200 rounded-lg p-5">
+    <div class="text-xs uppercase tracking-wider text-slate-500 mb-1">Auditoría</div>
+    <div class="text-2xl font-bold text-slate-900">Activa</div>
+    <div class="text-xs text-slate-400 mt-1">AuditMiddleware</div>
+  </div>
+</div>
+
+<script>
+  fetch('/health-check/').then(r => {
+    document.getElementById('kpi-health').textContent = r.status === 200 ? 'OK' : 'FAIL';
+  }).catch(() => {
+    document.getElementById('kpi-health').textContent = 'FAIL';
+    document.getElementById('kpi-health').className = 'text-2xl font-bold text-rose-600 mono';
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,123 @@
+{% extends "base/base.html" %}
+{% block title %}BITE.co · Reportes{% endblock %}
+
+{% block content %}
+<div class="mb-6">
+  <h1 class="text-3xl font-bold tracking-tight">Reporte mensual</h1>
+  <p class="text-slate-600 mt-1">Consumo cloud por proveedor · empresa <span class="mono">{{ empresa_id }}</span></p>
+</div>
+
+<!-- ============= Filtros ============= -->
+<form method="get" class="bg-white border border-slate-200 rounded-lg p-5 mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
+  <div>
+    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wide mb-1">Empresa ID</label>
+    <input type="number" name="empresa_id" value="{{ empresa_id }}"
+           class="w-full border border-slate-300 rounded px-3 py-2 mono text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+  </div>
+  <div>
+    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wide mb-1">Mes</label>
+    <select name="mes" class="w-full border border-slate-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+      {% for m in "123456789012"|make_list %}{% endfor %}
+      {% for m_num in "1,2,3,4,5,6,7,8,9,10,11,12"|cut:" "|slice:":" %}{% endfor %}
+      <option value="1" {% if mes == 1 %}selected{% endif %}>Enero</option>
+      <option value="2" {% if mes == 2 %}selected{% endif %}>Febrero</option>
+      <option value="3" {% if mes == 3 %}selected{% endif %}>Marzo</option>
+      <option value="4" {% if mes == 4 %}selected{% endif %}>Abril</option>
+      <option value="5" {% if mes == 5 %}selected{% endif %}>Mayo</option>
+      <option value="6" {% if mes == 6 %}selected{% endif %}>Junio</option>
+      <option value="7" {% if mes == 7 %}selected{% endif %}>Julio</option>
+      <option value="8" {% if mes == 8 %}selected{% endif %}>Agosto</option>
+      <option value="9" {% if mes == 9 %}selected{% endif %}>Septiembre</option>
+      <option value="10" {% if mes == 10 %}selected{% endif %}>Octubre</option>
+      <option value="11" {% if mes == 11 %}selected{% endif %}>Noviembre</option>
+      <option value="12" {% if mes == 12 %}selected{% endif %}>Diciembre</option>
+    </select>
+  </div>
+  <div>
+    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wide mb-1">Año</label>
+    <input type="number" name="anio" value="{{ anio }}" min="2020" max="2030"
+           class="w-full border border-slate-300 rounded px-3 py-2 mono text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+  </div>
+  <div class="flex items-end">
+    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded px-4 py-2">
+      Generar
+    </button>
+  </div>
+</form>
+
+<!-- ============= Aviso ASR-01 ============= -->
+{% if cross_empresa_attempt %}
+<div class="mb-6 bg-rose-50 border border-rose-300 rounded-lg p-4 flex items-start gap-3">
+  <svg class="w-5 h-5 text-rose-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+  </svg>
+  <div class="text-sm">
+    <strong class="text-rose-900">Acceso cruzado bloqueado</strong>
+    <p class="text-rose-700 mt-0.5">Tu token corresponde a otra empresa. La consulta fue forzada a tu empresa real (#{{ empresa_id }}). Este intento quedo registrado en RegistroAuditoria.</p>
+  </div>
+</div>
+{% endif %}
+
+{% if error %}
+<div class="mb-6 bg-amber-50 border border-amber-300 rounded-lg p-4 text-sm text-amber-800">
+  <strong>Error:</strong> {{ error }}
+</div>
+{% endif %}
+
+<!-- ============= Resultados ============= -->
+{% if totales %}
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+  <div class="bg-white border border-slate-200 rounded-lg p-5">
+    <div class="text-xs uppercase tracking-wide text-slate-500">Total general</div>
+    <div class="text-3xl font-bold mt-1 text-emerald-600 mono">${{ total_general|floatformat:2 }}</div>
+  </div>
+  <div class="bg-white border border-slate-200 rounded-lg p-5">
+    <div class="text-xs uppercase tracking-wide text-slate-500">Proveedores</div>
+    <div class="text-3xl font-bold mt-1 mono">{{ totales|length }}</div>
+  </div>
+  <div class="bg-white border border-slate-200 rounded-lg p-5">
+    <div class="text-xs uppercase tracking-wide text-slate-500">Periodo</div>
+    <div class="text-3xl font-bold mt-1 mono">{{ mes }}/{{ anio }}</div>
+  </div>
+</div>
+
+<div class="bg-white border border-slate-200 rounded-lg overflow-hidden">
+  <div class="border-b border-slate-200 px-5 py-3 flex items-center justify-between">
+    <h2 class="font-semibold">Costo por proveedor</h2>
+    <span class="text-xs text-slate-400 mono">source: monitoring_db (replica)</span>
+  </div>
+  <table class="w-full">
+    <thead class="bg-slate-50 border-b border-slate-200">
+      <tr>
+        <th class="text-left px-5 py-2.5 text-xs font-semibold text-slate-600 uppercase tracking-wide">Proveedor</th>
+        <th class="text-left px-5 py-2.5 text-xs font-semibold text-slate-600 uppercase tracking-wide">Distribución</th>
+        <th class="text-right px-5 py-2.5 text-xs font-semibold text-slate-600 uppercase tracking-wide">Costo total</th>
+        <th class="text-right px-5 py-2.5 text-xs font-semibold text-slate-600 uppercase tracking-wide w-24">% del total</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-slate-100">
+      {% for proveedor, costo in totales.items %}
+      <tr class="hover:bg-slate-50">
+        <td class="px-5 py-3 font-semibold">{{ proveedor }}</td>
+        <td class="px-5 py-3">
+          <div class="bg-slate-100 rounded-full h-2 overflow-hidden">
+            <div class="bg-emerald-500 h-full" style="width: {% widthratio costo total_general 100 %}%"></div>
+          </div>
+        </td>
+        <td class="px-5 py-3 text-right mono">${{ costo|floatformat:2 }}</td>
+        <td class="px-5 py-3 text-right text-slate-600 mono">{% widthratio costo total_general 100 %}%</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="bg-white border border-slate-200 rounded-lg p-12 text-center">
+  <svg class="w-12 h-12 mx-auto text-slate-300 mb-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+  </svg>
+  <p class="text-slate-500">No hay datos para empresa {{ empresa_id }} en {{ mes }}/{{ anio }}.</p>
+  <p class="text-xs text-slate-400 mt-1">Prueba con otra combinacion o carga datos en la BD monitoring.</p>
+</div>
+{% endif %}
+{% endblock %}

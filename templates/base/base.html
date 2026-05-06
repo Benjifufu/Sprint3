@@ -1,0 +1,58 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}BITE.co{% endblock %}</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .mono { font-family: ui-monospace, "JetBrains Mono", "Menlo", monospace; }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col">
+
+<!-- ================== TOP BAR ================== -->
+<header class="bg-white border-b border-slate-200 shadow-sm">
+  <div class="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-8">
+      <a href="/dashboard/" class="text-xl font-bold tracking-tight text-slate-900">
+        bite<span class="text-emerald-600">.co</span>
+      </a>
+      {% if user.is_authenticated %}
+      <nav class="flex items-center gap-5 text-sm text-slate-600">
+        <a href="/dashboard/" class="hover:text-slate-900">Inicio</a>
+        <a href="/reportes/" class="hover:text-slate-900">Reportes</a>
+        <a href="/asr-hub/" class="hover:text-slate-900">ASR Testing Hub</a>
+      </nav>
+      {% endif %}
+    </div>
+    <div class="flex items-center gap-3 text-sm">
+      {% if user.is_authenticated %}
+        <span class="text-slate-600">
+          {{ user.username }} 
+          {% if user.rol %}<span class="text-slate-400">·</span>
+            <span class="px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded text-xs font-semibold">{{ user.rol }}</span>
+          {% endif %}
+        </span>
+        <a href="/logout/" class="text-slate-600 hover:text-rose-600 border border-slate-300 rounded px-3 py-1">Salir</a>
+      {% else %}
+        <a href="/login/auth0" class="bg-slate-900 text-white rounded px-4 py-1.5 hover:bg-slate-700">Login con Auth0</a>
+      {% endif %}
+    </div>
+  </div>
+</header>
+
+<!-- ================== MAIN ================== -->
+<main class="flex-1 max-w-6xl mx-auto px-6 py-8 w-full">
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="border-t border-slate-200 py-4 text-center text-xs text-slate-400">
+  ISIS-2503 · BITE.co · Sprint 3
+</footer>
+
+{% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,20 @@
+{% extends "base/base.html" %}
+{% block title %}BITE.co · Inicio{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto text-center py-16">
+  <h1 class="text-4xl font-bold tracking-tight mb-4">
+    Optimiza tu gasto en la <span class="text-emerald-600">nube</span>.
+  </h1>
+  <p class="text-lg text-slate-600 mb-8">
+    Visualiza y controla los costos de AWS y GCP en un solo lugar.
+  </p>
+  <a href="/login/auth0"
+     class="inline-block bg-slate-900 text-white px-6 py-3 rounded font-semibold hover:bg-slate-700">
+    Ingresar con Auth0
+  </a>
+  <p class="mt-4 text-xs text-slate-400 mono">
+    OAuth2 + RBAC · 100% accesos auditados
+  </p>
+</div>
+{% endblock %}
