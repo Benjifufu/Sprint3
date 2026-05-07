@@ -24,14 +24,14 @@
       <nav class="flex items-center gap-5 text-sm text-slate-600">
         <a href="/dashboard/" class="hover:text-slate-900">Inicio</a>
         <a href="/reportes/" class="hover:text-slate-900">Reportes</a>
-        <a href="/asr-hub/" class="hover:text-slate-900">ASR Testing Hub</a>
+        <a href="/asr-hub/" class="hover:text-slate-900">Pruebas de Seguridad</a>
       </nav>
       {% endif %}
     </div>
     <div class="flex items-center gap-3 text-sm">
       {% if user.is_authenticated %}
         <span class="text-slate-600">
-          {{ user.username }} 
+          {{ user.username }}
           {% if user.rol %}<span class="text-slate-400">·</span>
             <span class="px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded text-xs font-semibold">{{ user.rol }}</span>
           {% endif %}
