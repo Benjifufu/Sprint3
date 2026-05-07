@@ -39,7 +39,11 @@ def dashboard_view(request):
 
 def custom_logout(request):
     logout(request)
-    return redirect("/")
+    return redirect(
+        f"https://dev-lhsedsl4b3teyxes.us.auth0.com/v2/logout"
+        f"?client_id=UGG4z0BT5d2t3HcOt6LdVehrY5K5Qpkw"
+        f"&returnTo=http://biteco-alb-49945009.us-east-1.elb.amazonaws.com"
+    )
 
 
 urlpatterns = [

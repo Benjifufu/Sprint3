@@ -16,12 +16,14 @@ from registroAuditoria.models import RegistroAuditoria
 
 @login_required
 def hub(request):
-    """Dashboard principal del ASR Hub - todas las pruebas en una pagina."""
-    # KPIs iniciales (la pagina los actualiza con polling)
+    """Dashboard principal del ASR Hub - solo Admin."""
+    role = getattr(request.user, 'rol', 'Usuario')
+    if role != 'Admin':
+        from django.http import HttpResponseForbidden
+        return HttpResponseForbidden("No tienes permisos para acceder a esta página.")
     qs = RegistroAuditoria.objects.all()
     total = qs.count()
     fallidos = qs.filter(resultado="fallido").count()
-
     return render(request, "registroAuditoria/hub.html", {
         "total_eventos": total,
         "total_fallidos": fallidos,
